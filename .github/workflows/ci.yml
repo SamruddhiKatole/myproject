@@ -1,0 +1,54 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      CI: "true"
+      NODE_ENV: test
+      APP_BASE_URL: http://localhost:3100
+      DATABASE_URL: postgresql://kaamsetu:kaamsetu_ci@localhost:5432/kaamsetu
+      LOG_LEVEL: warn
+    services:
+      # Not used by P1 tests; present so P2 integration tests run without CI changes.
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: kaamsetu
+          POSTGRES_PASSWORD: kaamsetu_ci
+          POSTGRES_DB: kaamsetu
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U kaamsetu -d kaamsetu"
+          --health-interval 5s --health-timeout 3s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run format:check
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7
+      - run: npm audit --omit=dev --audit-level=high

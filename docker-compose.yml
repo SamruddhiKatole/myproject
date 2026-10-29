@@ -1,0 +1,22 @@
+# Local development services only — not for production.
+# Credentials here are throwaway dev values; production uses managed Postgres with secrets in env.
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: kaamsetu-db
+    environment:
+      POSTGRES_USER: kaamsetu
+      POSTGRES_PASSWORD: kaamsetu_dev
+      POSTGRES_DB: kaamsetu
+    ports:
+      - "5432:5432"
+    volumes:
+      - kaamsetu-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U kaamsetu -d kaamsetu"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  kaamsetu-db-data:

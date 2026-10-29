@@ -1,0 +1,28 @@
+# dependencies
+node_modules/
+
+# next.js
+.next/
+out/
+next-env.d.ts
+*.tsbuildinfo
+
+# testing
+coverage/
+playwright-report/
+test-results/
+blob-report/
+
+# env files — never commit real secrets; .env.example is the documented contract
+.env
+.env.*
+!.env.example
+
+# logs & OS noise
+npm-debug.log*
+*.log
+.DS_Store
+Thumbs.db
+
+# local uploads (dev storage adapter, P5+)
+/storage/
