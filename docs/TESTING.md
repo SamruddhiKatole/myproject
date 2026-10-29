@@ -61,16 +61,19 @@ Defined in `docs/IMPLEMENTATION_ROADMAP.md` under each phase, item 7.
 | 2026-10-28 | P1 | `docker compose config --quiet` | PASS (exit 0) | File validated only; container **not started** |
 
 | 2026-10-29 | P1 | `git push -u origin main` | FAIL: "could not read Username for 'https://github.com': terminal prompts disabled" | No GitHub credentials on this machine; the owner must push |
+| 2026-10-29 | P1 | `git push -u origin main` (owner signed in; token without `workflow` scope) | FAIL: remote rejected `.github/workflows/ci.yml` (token lacks `workflow` scope) | Owner added the scope |
+| 2026-10-29 | P1 | `git push -u origin main` | PASS: `origin/main` = `31757eb` | Pushed by the owner from the terminal tab |
+| 2026-10-29 | P1 | GitHub Actions CI, run [40830903353](https://github.com/SamruddhiKatole/myproject/actions/runs/40830903353) on `31757eb` | **PASS** (success, ≈1m20s). Every step succeeded: npm ci, lint, format:check, typecheck, test, build, playwright install, test:e2e, npm audit | Clean checkout on ubuntu‑latest, Node 24, Postgres 16 service. Result read via GitHub REST API |
 
 ### P1 tests that were NOT run
-- **CI workflow on GitHub**: NOT RUN. The remote is set, but the push hasn't happened yet.
+- **CI workflow on GitHub**: done. PASS (run 40830903353).
 - **`npm run dev`** (development server): NOT RUN. The production server (`next start`) is exercised by E2E.
 - **`docker compose up -d db`**: NOT RUN. Only the config was validated.
-- **README quick start from a clean clone**: NOT RUN.
+- **README quick start from a clean clone**: PARTLY covered. CI did a clean checkout plus `npm ci`, build and tests. Still not run: `docker compose up -d db` and `npm run dev`.
 - **Server refuses to start when `DATABASE_URL` is missing** (live check): NOT RUN. The attempt was interrupted. It would have temporarily renamed `.env`, and that part ran, so `.env` was restored. Coverage today: `parseEnv` unit tests plus `src/instrumentation.ts`, which calls it at startup.
 
 ## 6. Known gaps
-- Git repository exists (since P1) but has no GitHub remote. CI (`.github/workflows/ci.yml`) has never run.
+- CI runs on pushes to `main` and on PRs (first run green, 2026-10-29). The `gh` CLI isn't installed here, so CI results are read through the public GitHub API (the repo is public).
 - Next.js anonymous telemetry is on by default. Consider `NEXT_TELEMETRY_DISABLED=1` in CI and production (owner choice).
 - Real SMS delivery cannot be tested until DLT registration and provider credentials exist (P14).
 - Native‑speaker translation review and real‑device testing are external dependencies (P13).

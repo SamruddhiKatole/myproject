@@ -8,7 +8,7 @@
 | ID | Phase | Status | Depends on |
 |---|---|---|---|
 | P0 | Planning & persistent documentation | COMPLETE (approved 2026-10-27) | — |
-| P1 | Project foundation & tooling | IMPLEMENTED (2026-10-28; on `main` 2026-10-29). Not COMPLETE: CI result and clean‑clone quick start pending | P0 approved ✓ |
+| P1 | Project foundation & tooling | IMPLEMENTED (2026-10-28; on `main`, CI green 2026-10-29). Not COMPLETE: local `docker compose up` + `npm run dev` check pending | P0 approved ✓ |
 | P2 | Database schema, migrations & seed data | NOT STARTED | P1 |
 | P3 | Phone‑OTP authentication & sessions | NOT STARTED | P2 |
 | P4 | App shell, i18n framework & onboarding entry | NOT STARTED | P3 |
@@ -68,7 +68,8 @@ Estimated effort (1 developer, rough): P1–P4 ≈ 1.5 weeks; P5–P8 ≈ 3 week
 11. **Actual outcome (2026-10-28)**: IMPLEMENTED.
     - **Differences from the plan**: `vitest.config.mts` (not `.ts`); `.prettierrc.json`; added `src/instrumentation.ts`, `tests/unit/logger.test.ts`, `src/app/globals.css`, `postcss.config.mjs`, `.gitattributes`, `.nvmrc`, `.prettierignore`.
     - **Criteria met with evidence**: lint, format, typecheck, unit (8), build, E2E (3), audit, env‑throws test, logger‑redaction test, `.env` git‑ignored.
-    - **Still open**: the first CI run on GitHub (committed to `main` 2026-10-29; push pending owner sign‑in); `npm run dev`, `docker compose up` and the README quick start from a clean clone (not run).
+    - **CI on GitHub**: PASS (run 40830903353, commit `31757eb`, 2026-10-29). This also covers a clean checkout with install, build and tests.
+    - **Still open**: `docker compose up -d db` and `npm run dev` (local quick start), not run.
     - Details in `docs/TESTING.md §5`.
 
 ---
