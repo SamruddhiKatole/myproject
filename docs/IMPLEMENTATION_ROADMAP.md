@@ -9,7 +9,7 @@
 |---|---|---|---|
 | P0 | Planning & persistent documentation | COMPLETE (approved 2026-10-27) | — |
 | P1 | Project foundation & tooling | IMPLEMENTED (2026-10-28; on `main`, CI green 2026-10-29). Not COMPLETE: local `docker compose up` + `npm run dev` check pending | P0 approved ✓ |
-| P2 | Database schema, migrations & seed data | NOT STARTED | P1 |
+| P2 | Database schema, migrations & seed data | IMPLEMENTED locally (2026-10-30); CI + owner review pending | P1 |
 | P3 | Phone‑OTP authentication & sessions | NOT STARTED | P2 |
 | P4 | App shell, i18n framework & onboarding entry | NOT STARTED | P3 |
 | P5 | Worker profile & onboarding | NOT STARTED | P4 |
@@ -85,6 +85,14 @@ Estimated effort (1 developer, rough): P1–P4 ≈ 1.5 weeks; P5–P8 ≈ 3 week
 8. **Security/regression**: demo seed refuses to run when `NODE_ENV=production`; no real phone numbers in seeds (use reserved `+9199999xxxxx` style test numbers).
 9. **Done**: ERD in ARCHITECTURE matches schema (diff reviewed); evidence recorded.
 10. **Risks/rollback**: locality coordinate accuracy (manually curated; verify sample with field team); rollback = drop dev DB, revert migration (pre‑production only).
+11. **Outcome (2026-10-30)**: all acceptance items pass locally (`docs/TESTING.md §5`). Deviations, recorded in D‑018/D‑019:
+    - generated columns instead of triggers
+    - 59 localities, not ~100 (the pilot needs 3–5)
+    - 17 categories, not 16
+    - integration tests use a separate `kaamsetu_test` database
+    - local Postgres is native 16.15
+
+    Still open: the ERD diff against ARCHITECTURE §5.1 (rating fields, generated FTS); CI on the branch.
 
 ---
 

@@ -9,7 +9,7 @@ test("health endpoint reports ok without caching", async ({ request }) => {
   const response = await request.get("/api/health");
   expect(response.status()).toBe(200);
   expect(response.headers()["cache-control"]).toContain("no-store");
-  expect(await response.json()).toMatchObject({ status: "ok", service: "kaamsetu" });
+  expect(await response.json()).toMatchObject({ status: "ok", service: "kaamsetu", db: "ok" });
 });
 
 test("security headers are set and the framework is not advertised", async ({ request }) => {

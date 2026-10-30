@@ -24,5 +24,8 @@ npm-debug.log*
 .DS_Store
 Thumbs.db
 
+# generated Prisma client (rebuilt by `prisma generate` / postinstall)
+/src/generated/
+
 # local uploads (dev storage adapter, P5+)
 /storage/

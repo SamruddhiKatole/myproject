@@ -4,5 +4,7 @@ playwright-report
 test-results
 package-lock.json
 next-env.d.ts
+src/generated
+prisma/migrations
 # project docs are hand-maintained (long tables); not auto-formatted
 *.md

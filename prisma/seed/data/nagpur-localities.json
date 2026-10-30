@@ -1,0 +1,478 @@
+{
+  "_source": "Approximate neighbourhood centroids (±1–2 km) compiled from general knowledge on 2026-10-30. NOT surveyed. Verify with the field team before the pilot; Hindi/Marathi spellings need native review (P13).",
+  "city": { "slug": "nagpur", "nameEn": "Nagpur", "nameHi": "नागपुर", "nameMr": "नागपूर" },
+  "localities": [
+    {
+      "slug": "sitabuldi",
+      "nameEn": "Sitabuldi",
+      "nameHi": "सीताबर्डी",
+      "nameMr": "सीताबर्डी",
+      "lat": 21.146,
+      "lng": 79.083
+    },
+    {
+      "slug": "dharampeth",
+      "nameEn": "Dharampeth",
+      "nameHi": "धरमपेठ",
+      "nameMr": "धरमपेठ",
+      "lat": 21.1405,
+      "lng": 79.068
+    },
+    {
+      "slug": "ramdaspeth",
+      "nameEn": "Ramdaspeth",
+      "nameHi": "रामदासपेठ",
+      "nameMr": "रामदासपेठ",
+      "lat": 21.135,
+      "lng": 79.076
+    },
+    {
+      "slug": "shivaji-nagar",
+      "nameEn": "Shivaji Nagar",
+      "nameHi": "शिवाजी नगर",
+      "nameMr": "शिवाजी नगर",
+      "lat": 21.135,
+      "lng": 79.065
+    },
+    {
+      "slug": "gokulpeth",
+      "nameEn": "Gokulpeth",
+      "nameHi": "गोकुलपेठ",
+      "nameMr": "गोकुळपेठ",
+      "lat": 21.14,
+      "lng": 79.062
+    },
+    {
+      "slug": "civil-lines",
+      "nameEn": "Civil Lines",
+      "nameHi": "सिविल लाइंस",
+      "nameMr": "सिव्हिल लाइन्स",
+      "lat": 21.153,
+      "lng": 79.074
+    },
+    {
+      "slug": "sadar",
+      "nameEn": "Sadar",
+      "nameHi": "सदर",
+      "nameMr": "सदर",
+      "lat": 21.162,
+      "lng": 79.08
+    },
+    {
+      "slug": "seminary-hills",
+      "nameEn": "Seminary Hills",
+      "nameHi": "सेमिनरी हिल्स",
+      "nameMr": "सेमिनरी हिल्स",
+      "lat": 21.165,
+      "lng": 79.06
+    },
+    {
+      "slug": "friends-colony",
+      "nameEn": "Friends Colony",
+      "nameHi": "फ्रेंड्स कॉलोनी",
+      "nameMr": "फ्रेंड्स कॉलनी",
+      "lat": 21.168,
+      "lng": 79.045
+    },
+    {
+      "slug": "gittikhadan",
+      "nameEn": "Gittikhadan",
+      "nameHi": "गिट्टीखदान",
+      "nameMr": "गिट्टीखदान",
+      "lat": 21.17,
+      "lng": 79.05
+    },
+    {
+      "slug": "mankapur",
+      "nameEn": "Mankapur",
+      "nameHi": "मानकापुर",
+      "nameMr": "मानकापूर",
+      "lat": 21.178,
+      "lng": 79.075
+    },
+    {
+      "slug": "zingabai-takli",
+      "nameEn": "Zingabai Takli",
+      "nameHi": "झिंगाबाई टाकली",
+      "nameMr": "झिंगाबाई टाकळी",
+      "lat": 21.19,
+      "lng": 79.065
+    },
+    {
+      "slug": "godhni",
+      "nameEn": "Godhni",
+      "nameHi": "गोधनी",
+      "nameMr": "गोधनी",
+      "lat": 21.2,
+      "lng": 79.05
+    },
+    {
+      "slug": "dabha",
+      "nameEn": "Dabha",
+      "nameHi": "दाभा",
+      "nameMr": "दाभा",
+      "lat": 21.165,
+      "lng": 79.035
+    },
+    {
+      "slug": "jaripatka",
+      "nameEn": "Jaripatka",
+      "nameHi": "जरीपटका",
+      "nameMr": "जरीपटका",
+      "lat": 21.182,
+      "lng": 79.088
+    },
+    {
+      "slug": "indora",
+      "nameEn": "Indora",
+      "nameHi": "इंदोरा",
+      "nameMr": "इंदोरा",
+      "lat": 21.175,
+      "lng": 79.095
+    },
+    {
+      "slug": "nara",
+      "nameEn": "Nara",
+      "nameHi": "नारा",
+      "nameMr": "नारा",
+      "lat": 21.2,
+      "lng": 79.1
+    },
+    {
+      "slug": "koradi-road",
+      "nameEn": "Koradi Road",
+      "nameHi": "कोराडी रोड",
+      "nameMr": "कोराडी रोड",
+      "lat": 21.2,
+      "lng": 79.085
+    },
+    {
+      "slug": "kamptee-road",
+      "nameEn": "Kamptee Road",
+      "nameHi": "कामठी रोड",
+      "nameMr": "कामठी रोड",
+      "lat": 21.185,
+      "lng": 79.1
+    },
+    {
+      "slug": "wanjra",
+      "nameEn": "Wanjra",
+      "nameHi": "वांजरा",
+      "nameMr": "वांजरा",
+      "lat": 21.195,
+      "lng": 79.125
+    },
+    {
+      "slug": "kalamna",
+      "nameEn": "Kalamna",
+      "nameHi": "कलमना",
+      "nameMr": "कळमना",
+      "lat": 21.175,
+      "lng": 79.14
+    },
+    {
+      "slug": "pardi",
+      "nameEn": "Pardi",
+      "nameHi": "पारडी",
+      "nameMr": "पारडी",
+      "lat": 21.165,
+      "lng": 79.155
+    },
+    {
+      "slug": "bhandara-road",
+      "nameEn": "Bhandara Road",
+      "nameHi": "भंडारा रोड",
+      "nameMr": "भंडारा रोड",
+      "lat": 21.16,
+      "lng": 79.14
+    },
+    {
+      "slug": "wardhaman-nagar",
+      "nameEn": "Wardhaman Nagar",
+      "nameHi": "वर्धमान नगर",
+      "nameMr": "वर्धमान नगर",
+      "lat": 21.15,
+      "lng": 79.135
+    },
+    {
+      "slug": "lakadganj",
+      "nameEn": "Lakadganj",
+      "nameHi": "लकड़गंज",
+      "nameMr": "लकडगंज",
+      "lat": 21.155,
+      "lng": 79.125
+    },
+    {
+      "slug": "itwari",
+      "nameEn": "Itwari",
+      "nameHi": "इतवारी",
+      "nameMr": "इतवारी",
+      "lat": 21.155,
+      "lng": 79.112
+    },
+    {
+      "slug": "gandhibagh",
+      "nameEn": "Gandhibagh",
+      "nameHi": "गांधीबाग",
+      "nameMr": "गांधीबाग",
+      "lat": 21.152,
+      "lng": 79.11
+    },
+    {
+      "slug": "mominpura",
+      "nameEn": "Mominpura",
+      "nameHi": "मोमिनपुरा",
+      "nameMr": "मोमिनपुरा",
+      "lat": 21.157,
+      "lng": 79.1
+    },
+    {
+      "slug": "mahal",
+      "nameEn": "Mahal",
+      "nameHi": "महाल",
+      "nameMr": "महाल",
+      "lat": 21.143,
+      "lng": 79.108
+    },
+    {
+      "slug": "reshimbagh",
+      "nameEn": "Reshimbagh",
+      "nameHi": "रेशिमबाग",
+      "nameMr": "रेशीमबाग",
+      "lat": 21.13,
+      "lng": 79.11
+    },
+    {
+      "slug": "nandanvan",
+      "nameEn": "Nandanvan",
+      "nameHi": "नंदनवन",
+      "nameMr": "नंदनवन",
+      "lat": 21.135,
+      "lng": 79.13
+    },
+    {
+      "slug": "sakkardara",
+      "nameEn": "Sakkardara",
+      "nameHi": "सक्करदरा",
+      "nameMr": "सक्करदरा",
+      "lat": 21.124,
+      "lng": 79.115
+    },
+    {
+      "slug": "wathoda",
+      "nameEn": "Wathoda",
+      "nameHi": "वाठोडा",
+      "nameMr": "वाठोडा",
+      "lat": 21.12,
+      "lng": 79.16
+    },
+    {
+      "slug": "dighori",
+      "nameEn": "Dighori",
+      "nameHi": "दिघोरी",
+      "nameMr": "दिघोरी",
+      "lat": 21.108,
+      "lng": 79.14
+    },
+    {
+      "slug": "tukdoji-square",
+      "nameEn": "Tukdoji Square",
+      "nameHi": "तुकडोजी चौक",
+      "nameMr": "तुकडोजी चौक",
+      "lat": 21.11,
+      "lng": 79.105
+    },
+    {
+      "slug": "mhalgi-nagar",
+      "nameEn": "Mhalgi Nagar",
+      "nameHi": "म्हालगी नगर",
+      "nameMr": "म्हाळगी नगर",
+      "lat": 21.1,
+      "lng": 79.11
+    },
+    {
+      "slug": "hudkeshwar",
+      "nameEn": "Hudkeshwar",
+      "nameHi": "हुडकेश्वर",
+      "nameMr": "हुडकेश्वर",
+      "lat": 21.095,
+      "lng": 79.12
+    },
+    {
+      "slug": "rameshwari",
+      "nameEn": "Rameshwari",
+      "nameHi": "रामेश्वरी",
+      "nameMr": "रामेश्वरी",
+      "lat": 21.118,
+      "lng": 79.095
+    },
+    {
+      "slug": "ajni",
+      "nameEn": "Ajni",
+      "nameHi": "अजनी",
+      "nameMr": "अजनी",
+      "lat": 21.122,
+      "lng": 79.082
+    },
+    {
+      "slug": "congress-nagar",
+      "nameEn": "Congress Nagar",
+      "nameHi": "कांग्रेस नगर",
+      "nameMr": "काँग्रेस नगर",
+      "lat": 21.128,
+      "lng": 79.08
+    },
+    {
+      "slug": "narendra-nagar",
+      "nameEn": "Narendra Nagar",
+      "nameHi": "नरेंद्र नगर",
+      "nameMr": "नरेंद्र नगर",
+      "lat": 21.102,
+      "lng": 79.082
+    },
+    {
+      "slug": "manish-nagar",
+      "nameEn": "Manish Nagar",
+      "nameHi": "मनीष नगर",
+      "nameMr": "मनीष नगर",
+      "lat": 21.087,
+      "lng": 79.073
+    },
+    {
+      "slug": "besa",
+      "nameEn": "Besa",
+      "nameHi": "बेसा",
+      "nameMr": "बेसा",
+      "lat": 21.07,
+      "lng": 79.095
+    },
+    {
+      "slug": "beltarodi",
+      "nameEn": "Beltarodi",
+      "nameHi": "बेलतरोडी",
+      "nameMr": "बेलतरोडी",
+      "lat": 21.065,
+      "lng": 79.075
+    },
+    {
+      "slug": "somalwada",
+      "nameEn": "Somalwada",
+      "nameHi": "सोमलवाड़ा",
+      "nameMr": "सोमलवाडा",
+      "lat": 21.098,
+      "lng": 79.065
+    },
+    {
+      "slug": "sonegaon",
+      "nameEn": "Sonegaon",
+      "nameHi": "सोनेगांव",
+      "nameMr": "सोनेगाव",
+      "lat": 21.092,
+      "lng": 79.056
+    },
+    {
+      "slug": "chhatrapati-nagar",
+      "nameEn": "Chhatrapati Nagar",
+      "nameHi": "छत्रपति नगर",
+      "nameMr": "छत्रपती नगर",
+      "lat": 21.108,
+      "lng": 79.07
+    },
+    {
+      "slug": "khamla",
+      "nameEn": "Khamla",
+      "nameHi": "खामला",
+      "nameMr": "खामला",
+      "lat": 21.105,
+      "lng": 79.065
+    },
+    {
+      "slug": "pratap-nagar",
+      "nameEn": "Pratap Nagar",
+      "nameHi": "प्रताप नगर",
+      "nameMr": "प्रताप नगर",
+      "lat": 21.114,
+      "lng": 79.056
+    },
+    {
+      "slug": "swawlambi-nagar",
+      "nameEn": "Swawlambi Nagar",
+      "nameHi": "स्वावलंबी नगर",
+      "nameMr": "स्वावलंबी नगर",
+      "lat": 21.11,
+      "lng": 79.055
+    },
+    {
+      "slug": "trimurti-nagar",
+      "nameEn": "Trimurti Nagar",
+      "nameHi": "त्रिमूर्ति नगर",
+      "nameMr": "त्रिमूर्ती नगर",
+      "lat": 21.11,
+      "lng": 79.048
+    },
+    {
+      "slug": "laxmi-nagar",
+      "nameEn": "Laxmi Nagar",
+      "nameHi": "लक्ष्मी नगर",
+      "nameMr": "लक्ष्मी नगर",
+      "lat": 21.122,
+      "lng": 79.064
+    },
+    {
+      "slug": "bajaj-nagar",
+      "nameEn": "Bajaj Nagar",
+      "nameHi": "बजाज नगर",
+      "nameMr": "बजाज नगर",
+      "lat": 21.127,
+      "lng": 79.06
+    },
+    {
+      "slug": "ambazari",
+      "nameEn": "Ambazari",
+      "nameHi": "अंबाझरी",
+      "nameMr": "अंबाझरी",
+      "lat": 21.13,
+      "lng": 79.045
+    },
+    {
+      "slug": "jaitala",
+      "nameEn": "Jaitala",
+      "nameHi": "जयताला",
+      "nameMr": "जयताळा",
+      "lat": 21.095,
+      "lng": 79.04
+    },
+    {
+      "slug": "hingna-road",
+      "nameEn": "Hingna Road",
+      "nameHi": "हिंगना रोड",
+      "nameMr": "हिंगणा रोड",
+      "lat": 21.11,
+      "lng": 79.03
+    },
+    {
+      "slug": "midc-hingna",
+      "nameEn": "MIDC Hingna",
+      "nameHi": "एमआईडीसी हिंगना",
+      "nameMr": "एमआयडीसी हिंगणा",
+      "lat": 21.1,
+      "lng": 79.005
+    },
+    {
+      "slug": "hingna",
+      "nameEn": "Hingna",
+      "nameHi": "हिंगना",
+      "nameMr": "हिंगणा",
+      "lat": 21.09,
+      "lng": 78.98
+    },
+    {
+      "slug": "wadi",
+      "nameEn": "Wadi",
+      "nameHi": "वाड़ी",
+      "nameMr": "वाडी",
+      "lat": 21.145,
+      "lng": 78.995
+    }
+  ]
+}

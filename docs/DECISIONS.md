@@ -112,4 +112,27 @@ Never edit an accepted decision's rationale silently — add a new entry that su
 - The env loader is lazy (`getEnv()`), so imports never fail at build time. `src/instrumentation.ts` calls it at server start for fail‑fast behaviour.
 - Basic security headers are set in `next.config.ts`; the full CSP comes with P14. The `X-Powered-By` header is disabled.
 - `pino` is listed in `serverExternalPackages`, so it isn't bundled.
-- Branching: P1 was committed directly to `main` at the owner's request (2026-10-29). The repo is public on GitHub (`SamruddhiKatole/myproject`), which the owner confirmed is fine; this supersedes the "private repo" default in Q1. Later phases default to a `phase/…` branch with a PR. Local git 2.20 lacks `git switch`, so use `git checkout -b`.
+- Branching (P1 only): P1 was committed directly to `main` at the owner's request (2026-10-29). The repo is public on GitHub (`SamruddhiKatole/myproject`), which the owner confirmed is fine; this supersedes the "private repo" default in Q1. Later phases default to a `phase/…` branch with a PR. Local git 2.20 lacks `git switch`, so use `git checkout -b`.
+
+### D‑018 — P2 data‑layer details
+- **Date**: 2026-10-30 · **Status**: ACCEPTED (implementation details within D‑002/D‑005; schema not yet validated, pending installs)
+- **Prisma 7.10.1, not 8.x**: npm's `latest` tag for `prisma` points at a release candidate (8.0.0‑rc.28). We pin the stable 7.10.1 (released 2026-10-15) for `prisma`, `@prisma/client` and `@prisma/adapter-pg`.
+- **Prisma 7 layout**: the `prisma-client` generator outputs to `src/generated/prisma` (git‑ignored, rebuilt by `postinstall`). The connection URL lives in `prisma.config.ts`, and the client connects through `@prisma/adapter-pg` + `pg`. `.env` is loaded with Node 24's `process.loadEnvFile()`, so there's no `dotenv` dependency.
+- **Full‑text search**: `searchVector` is a **STORED GENERATED** `tsvector` column (Job: title + description; WorkerProfile: displayName + bio), not trigger‑maintained as ARCHITECTURE §5.1 first said. It uses the `simple` configuration (no Hindi/Marathi stemming exists in Postgres), with a GIN index. It's modelled as `Unsupported("tsvector")?` and converted by the hand‑written migration `prisma/migrations/20261030000100_fts_generated_columns`. The `init` migration was produced with `prisma migrate diff --from-empty --to-schema` (no database needed).
+- **CHECK constraints** in SQL for pay range, openings, `hiredCount ≤ openings`, rating 1–5, experience 0–50, coordinates, and no self‑block. These are a second line of defence; services still validate with Zod.
+- **Ratings** are stored as `ratingSum` + `ratingCount` (integers), with the average computed on read. This avoids float drift; ARCHITECTURE §5.1 said `ratingAvg`.
+- **Locality names** are three columns (`nameEn`, `nameHi`, `nameMr`), not JSON, so they're simple to query and sort.
+- **Distance**: Haversine computed at query time in P7. The precomputed matrix is deferred until query plans show a need.
+- **Seed data**: about 60 Nagpur localities with **approximate centroids from general knowledge, not surveyed**, and 17 categories. Hindi/Marathi strings are best‑effort. Both are flagged for field‑team and native‑speaker review (P13/P15).
+- **Reserved fake phone ranges**: tests `+91999990xxxx`, demo workers `+91999991xxxx`, demo employers `+91999992xxxx`.
+- **Test split**: `npm test` = unit (no DB); `npm run test:integration` = Postgres‑backed, run one file at a time. CI runs both after `prisma migrate deploy`.
+- **Separate test database** (added 2026-10-30, after validation): integration tests TRUNCATE every table. They therefore read `TEST_DATABASE_URL` (locally `kaamsetu_test`, created by `npm run db:test:prepare`) and refuse to run when it equals `DATABASE_URL`, except in CI, whose database is throwaway.
+- **Generated columns vs `migrate diff`**: Prisma reads a STORED GENERATED column as a database default. The schema therefore mirrors each generation expression with `@default(dbgenerated(…))`, so `migrate diff`/`migrate dev` stay empty instead of proposing a `DROP DEFAULT`.
+- Status update 2026-10-30: schema validated against a real database (see TESTING §5).
+
+### D‑019 — Native local PostgreSQL instead of Docker
+- **Date**: 2026-10-30 · **Status**: ACCEPTED (owner choice)
+- **Context**: Docker Desktop is installed but its engine wasn't running. The owner asked whether Docker was needed.
+- **Decision**: For local development, use native **PostgreSQL 16.15** installed via `winget` (the EDB installer). The owner ran the wizard and holds the `postgres` superuser password. App role `kaamsetu` (LOGIN, CREATEDB, dev‑only password) owns `kaamsetu` and `kaamsetu_test`. CREATEDB lets Prisma create its shadow database.
+- `docker-compose.yml` stays as an optional alternative with the same credentials. CI is unchanged (Postgres 16 service container). Production is unaffected (managed Postgres, P14).
+- **Trade‑off**: a background Windows service uses some RAM, and the major version must be kept in step with CI/production (16) by hand.

@@ -1,0 +1,616 @@
+// KaamSetu data model — see docs/ARCHITECTURE.md §5 and docs/DECISIONS.md.
+// Money is whole rupees (Int, D-006). Phone numbers are PII: never select them into public payloads.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ───────────────────────────── Enums ─────────────────────────────
+
+enum Locale {
+  en
+  hi
+  mr
+}
+
+enum UserStatus {
+  ACTIVE
+  SUSPENDED
+  DELETED
+}
+
+enum UserMode {
+  WORKER
+  EMPLOYER
+}
+
+enum ProfileType {
+  WORKER
+  EMPLOYER
+}
+
+/// Self-declared, optional, private (D-015).
+enum Gender {
+  WOMAN
+  MAN
+  OTHER
+  PREFER_NOT_TO_SAY
+}
+
+/// D-015: fixed list only, never free text.
+enum GenderRequirement {
+  ANY
+  WOMEN_ONLY
+  MEN_ONLY
+}
+
+enum EmployerType {
+  HOUSEHOLD
+  CONTRACTOR
+  SHOP
+  BUSINESS
+  OTHER
+}
+
+enum VerificationStatus {
+  UNVERIFIED
+  PHONE_VERIFIED
+  KAAMSETU_VERIFIED
+}
+
+enum VerificationMethod {
+  PHONE
+  IN_PERSON
+  DOCUMENT_SIGHTED
+}
+
+enum PayUnit {
+  HOUR
+  DAY
+  WEEK
+  MONTH
+  FIXED
+}
+
+enum JobType {
+  ONE_TIME
+  DAILY_WAGE
+  PART_TIME_RECURRING
+  FULL_TIME
+}
+
+enum JobStatus {
+  DRAFT
+  OPEN
+  PAUSED
+  FILLED
+  CLOSED
+  EXPIRED
+  REMOVED
+}
+
+enum ApplicationStatus {
+  APPLIED
+  SHORTLISTED
+  OFFERED
+  HIRED
+  COMPLETED
+  REJECTED
+  WITHDRAWN
+  DECLINED
+  CLOSED
+  CANCELLED
+}
+
+enum ApplicationSource {
+  APPLIED
+  INVITED
+}
+
+enum InviteStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  EXPIRED
+}
+
+enum ReviewStatus {
+  VISIBLE
+  HIDDEN
+}
+
+enum ReportTargetType {
+  JOB
+  USER
+  REVIEW
+}
+
+enum ReportReason {
+  FAKE_JOB
+  ASKS_FOR_MONEY
+  HARASSMENT
+  ABUSIVE_LANGUAGE
+  WRONG_INFO
+  CHILD_LABOUR
+  DISCRIMINATION
+  OTHER
+}
+
+enum ReportStatus {
+  OPEN
+  ACTIONED
+  DISMISSED
+}
+
+enum OutboxChannel {
+  SMS
+}
+
+enum OutboxStatus {
+  PENDING
+  SENT
+  FAILED
+}
+
+enum UploadPurpose {
+  WORKER_PHOTO
+}
+
+enum UploadStatus {
+  PENDING
+  READY
+  REJECTED
+}
+
+// ─────────────────────── Reference data ───────────────────────
+
+model City {
+  id         String     @id @default(cuid())
+  slug       String     @unique
+  nameEn     String
+  nameHi     String
+  nameMr     String
+  isActive   Boolean    @default(true)
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  localities Locality[]
+}
+
+/// Neighbourhood with an approximate centroid. Distance = Haversine between centroids (D-005).
+model Locality {
+  id               String            @id @default(cuid())
+  cityId           String
+  slug             String
+  nameEn           String
+  nameHi           String
+  nameMr           String
+  lat              Float
+  lng              Float
+  isActive         Boolean           @default(true)
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  city             City              @relation(fields: [cityId], references: [id])
+  workerProfiles   WorkerProfile[]
+  employerProfiles EmployerProfile[]
+  jobs             Job[]
+
+  @@unique([cityId, slug])
+  @@index([cityId, isActive])
+}
+
+model SkillCategory {
+  id        String        @id @default(cuid())
+  slug      String        @unique
+  nameEn    String
+  nameHi    String
+  nameMr    String
+  icon      String
+  sortOrder Int           @default(0)
+  isActive  Boolean       @default(true)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  workers   WorkerSkill[]
+  jobs      Job[]
+}
+
+// ─────────────────────── Accounts & auth ───────────────────────
+
+model User {
+  id             String     @id @default(cuid())
+  /// E.164, e.g. +919999900001. PII.
+  phoneE164      String     @unique
+  status         UserStatus @default(ACTIVE)
+  isAdmin        Boolean    @default(false)
+  locale         Locale     @default(mr)
+  activeMode     UserMode?
+  consentVersion String?
+  consentAt      DateTime?
+  lastLoginAt    DateTime?
+  deletedAt      DateTime?
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+
+  sessions            Session[]
+  workerProfile       WorkerProfile?
+  employerProfile     EmployerProfile?
+  applicationEvents   ApplicationEvent[]
+  contactRevealsSeen  ContactReveal[]      @relation("RevealViewer")
+  contactRevealsOfMe  ContactReveal[]      @relation("RevealRevealed")
+  reviewsWritten      Review[]             @relation("ReviewAuthor")
+  reviewsReceived     Review[]             @relation("ReviewSubject")
+  reportsFiled        Report[]             @relation("ReportReporter")
+  reportsResolved     Report[]             @relation("ReportResolver")
+  blocksMade          Block[]              @relation("Blocker")
+  blocksReceived      Block[]              @relation("Blocked")
+  notifications       Notification[]
+  outboxMessages      OutboxMessage[]
+  uploads             Upload[]
+  auditLogs           AuditLog[]
+  verifications       VerificationRecord[] @relation("VerificationSubject")
+  verificationsByMe   VerificationRecord[] @relation("VerificationVerifier")
+
+  @@index([status])
+}
+
+model Session {
+  id         String   @id @default(cuid())
+  userId     String
+  /// SHA-256 of the cookie token; the raw token is never stored.
+  tokenHash  String   @unique
+  expiresAt  DateTime
+  userAgent  String?
+  ipHash     String?
+  createdAt  DateTime @default(now())
+  lastSeenAt DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+model OtpChallenge {
+  id         String    @id @default(cuid())
+  phoneE164  String
+  /// HMAC-SHA256(code, OTP_PEPPER).
+  codeHash   String
+  attempts   Int       @default(0)
+  expiresAt  DateTime
+  consumedAt DateTime?
+  ipHash     String?
+  createdAt  DateTime  @default(now())
+
+  @@index([phoneE164, createdAt])
+  @@index([createdAt])
+}
+
+model RateLimitBucket {
+  key         String
+  windowStart DateTime
+  count       Int      @default(0)
+
+  @@id([key, windowStart])
+  @@index([windowStart])
+}
+
+// ─────────────────────────── Profiles ───────────────────────────
+
+model WorkerProfile {
+  id                 String                     @id @default(cuid())
+  userId             String                     @unique
+  displayName        String
+  photoKey           String?
+  localityId         String
+  experienceYears    Int                        @default(0)
+  expectedPayAmount  Int?
+  expectedPayUnit    PayUnit?
+  availabilityText   String?
+  languages          Locale[]
+  bio                String?
+  /// Private; used only for restricted-job eligibility (D-015).
+  gender             Gender?
+  isAvailable        Boolean                    @default(true)
+  verificationStatus VerificationStatus         @default(PHONE_VERIFIED)
+  /// Rating aggregate kept as sum + count to avoid float drift (D-018).
+  ratingSum          Int                        @default(0)
+  ratingCount        Int                        @default(0)
+  /// STORED GENERATED column (see fts migration); never written by the app. Prisma reads the
+  /// generation expression as a default, so it is mirrored here to keep `migrate diff` clean.
+  searchVector       Unsupported("tsvector")? @default(dbgenerated("to_tsvector('simple'::regconfig, ((COALESCE(\"displayName\", ''::text) || ' '::text) || COALESCE(bio, ''::text)))"))
+  createdAt          DateTime                   @default(now())
+  updatedAt          DateTime                   @updatedAt
+  user               User                       @relation(fields: [userId], references: [id])
+  locality           Locality                   @relation(fields: [localityId], references: [id])
+  skills             WorkerSkill[]
+  applications       Application[]
+  invites            Invite[]
+
+  @@index([isAvailable, localityId])
+  @@index([searchVector], type: Gin)
+}
+
+model WorkerSkill {
+  workerProfileId String
+  categoryId      String
+  createdAt       DateTime      @default(now())
+  workerProfile   WorkerProfile @relation(fields: [workerProfileId], references: [id], onDelete: Cascade)
+  category        SkillCategory @relation(fields: [categoryId], references: [id])
+
+  @@id([workerProfileId, categoryId])
+  @@index([categoryId, workerProfileId])
+}
+
+model EmployerProfile {
+  id                 String             @id @default(cuid())
+  userId             String             @unique
+  displayName        String
+  employerType       EmployerType
+  businessName       String?
+  localityId         String
+  verificationStatus VerificationStatus @default(PHONE_VERIFIED)
+  ratingSum          Int                @default(0)
+  ratingCount        Int                @default(0)
+  /// Max OPEN jobs while unverified (FR-J4).
+  openJobLimit       Int                @default(3)
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+  user               User               @relation(fields: [userId], references: [id])
+  locality           Locality           @relation(fields: [localityId], references: [id])
+  jobs               Job[]
+  invites            Invite[]
+}
+
+// ───────────────────────────── Jobs ─────────────────────────────
+
+model Job {
+  id                String                   @id @default(cuid())
+  employerProfileId String
+  categoryId        String
+  title             String
+  description       String
+  payAmount         Int
+  payUnit           PayUnit
+  jobType           JobType
+  scheduleText      String?
+  startDate         DateTime?                @db.Date
+  localityId        String
+  openings          Int                      @default(1)
+  hiredCount        Int                      @default(0)
+  genderRequirement GenderRequirement        @default(ANY)
+  status            JobStatus                @default(DRAFT)
+  publishedAt       DateTime?
+  expiresAt         DateTime?
+  flaggedForReview  Boolean                  @default(false)
+  flagReasons       String[]
+  /// STORED GENERATED column (see fts migration); mirrored as a default like WorkerProfile's.
+  searchVector      Unsupported("tsvector")? @default(dbgenerated("to_tsvector('simple'::regconfig, ((COALESCE(title, ''::text) || ' '::text) || COALESCE(description, ''::text)))"))
+  createdAt         DateTime                 @default(now())
+  updatedAt         DateTime                 @updatedAt
+  employerProfile   EmployerProfile          @relation(fields: [employerProfileId], references: [id])
+  category          SkillCategory            @relation(fields: [categoryId], references: [id])
+  locality          Locality                 @relation(fields: [localityId], references: [id])
+  applications      Application[]
+  invites           Invite[]
+
+  @@index([status, categoryId, localityId, publishedAt(sort: Desc)])
+  @@index([employerProfileId, status])
+  @@index([status, expiresAt])
+  @@index([flaggedForReview, status])
+  @@index([searchVector], type: Gin)
+}
+
+// ───────────────────────── Hiring workflow ─────────────────────────
+
+/// Offer fields are folded into Application (D-007).
+model Application {
+  id              String             @id @default(cuid())
+  jobId           String
+  workerProfileId String
+  status          ApplicationStatus  @default(APPLIED)
+  source          ApplicationSource  @default(APPLIED)
+  note            String?
+  offerPayAmount  Int?
+  offerPayUnit    PayUnit?
+  offerStartDate  DateTime?          @db.Date
+  offerMessage    String?
+  hiredAt         DateTime?
+  completedAt     DateTime?
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+  job             Job                @relation(fields: [jobId], references: [id])
+  workerProfile   WorkerProfile      @relation(fields: [workerProfileId], references: [id])
+  events          ApplicationEvent[]
+  contactReveals  ContactReveal[]
+  reviews         Review[]
+
+  @@unique([jobId, workerProfileId])
+  @@index([jobId, status])
+  @@index([workerProfileId, status])
+}
+
+/// Immutable history of status changes (FR-H6).
+model ApplicationEvent {
+  id            String             @id @default(cuid())
+  applicationId String
+  actorUserId   String?
+  fromStatus    ApplicationStatus?
+  toStatus      ApplicationStatus
+  note          String?
+  createdAt     DateTime           @default(now())
+  application   Application        @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  actor         User?              @relation(fields: [actorUserId], references: [id])
+
+  @@index([applicationId, createdAt])
+}
+
+model Invite {
+  id                String          @id @default(cuid())
+  jobId             String
+  workerProfileId   String
+  employerProfileId String
+  status            InviteStatus    @default(PENDING)
+  expiresAt         DateTime
+  respondedAt       DateTime?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  job               Job             @relation(fields: [jobId], references: [id])
+  workerProfile     WorkerProfile   @relation(fields: [workerProfileId], references: [id])
+  employerProfile   EmployerProfile @relation(fields: [employerProfileId], references: [id])
+
+  @@unique([jobId, workerProfileId])
+  @@index([workerProfileId, status])
+  @@index([employerProfileId, createdAt])
+  @@index([status, expiresAt])
+}
+
+/// Audit of every phone-number reveal (FR-H4, D-008).
+model ContactReveal {
+  id             String      @id @default(cuid())
+  applicationId  String
+  viewerUserId   String
+  revealedUserId String
+  createdAt      DateTime    @default(now())
+  application    Application @relation(fields: [applicationId], references: [id])
+  viewer         User        @relation("RevealViewer", fields: [viewerUserId], references: [id])
+  revealed       User        @relation("RevealRevealed", fields: [revealedUserId], references: [id])
+
+  @@index([applicationId])
+  @@index([viewerUserId, createdAt])
+}
+
+// ─────────────────────── Reviews & safety ───────────────────────
+
+model Review {
+  id            String       @id @default(cuid())
+  applicationId String
+  authorUserId  String
+  subjectUserId String
+  subjectRole   ProfileType
+  rating        Int
+  text          String?
+  status        ReviewStatus @default(VISIBLE)
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  application   Application  @relation(fields: [applicationId], references: [id])
+  author        User         @relation("ReviewAuthor", fields: [authorUserId], references: [id])
+  subject       User         @relation("ReviewSubject", fields: [subjectUserId], references: [id])
+
+  @@unique([applicationId, authorUserId])
+  @@index([subjectUserId, status, createdAt])
+}
+
+/// Polymorphic target: targetType + targetId (Job | User | Review).
+model Report {
+  id             String           @id @default(cuid())
+  reporterUserId String
+  targetType     ReportTargetType
+  targetId       String
+  reason         ReportReason
+  details        String?
+  status         ReportStatus     @default(OPEN)
+  resolvedById   String?
+  resolution     String?
+  resolvedAt     DateTime?
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  reporter       User             @relation("ReportReporter", fields: [reporterUserId], references: [id])
+  resolvedBy     User?            @relation("ReportResolver", fields: [resolvedById], references: [id])
+
+  @@index([status, createdAt])
+  @@index([targetType, targetId])
+  @@index([reporterUserId, targetType, targetId, createdAt])
+}
+
+model Block {
+  blockerUserId String
+  blockedUserId String
+  createdAt     DateTime @default(now())
+  blocker       User     @relation("Blocker", fields: [blockerUserId], references: [id])
+  blocked       User     @relation("Blocked", fields: [blockedUserId], references: [id])
+
+  @@id([blockerUserId, blockedUserId])
+  @@index([blockedUserId])
+}
+
+// ─────────────────── Notifications & operations ───────────────────
+
+model Notification {
+  id        String    @id @default(cuid())
+  userId    String
+  type      String
+  payload   Json
+  readAt    DateTime?
+  createdAt DateTime  @default(now())
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, readAt, createdAt(sort: Desc)])
+}
+
+/// Written in the same transaction as the state change; sent by `jobs:tick` (D-010).
+model OutboxMessage {
+  id        String        @id @default(cuid())
+  channel   OutboxChannel
+  toUserId  String
+  template  String
+  params    Json
+  status    OutboxStatus  @default(PENDING)
+  attempts  Int           @default(0)
+  nextTryAt DateTime      @default(now())
+  sentAt    DateTime?
+  error     String?
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  toUser    User          @relation(fields: [toUserId], references: [id])
+
+  @@index([status, nextTryAt])
+}
+
+model Upload {
+  id          String        @id @default(cuid())
+  ownerUserId String
+  key         String        @unique
+  mime        String
+  bytes       Int
+  purpose     UploadPurpose
+  status      UploadStatus  @default(PENDING)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  owner       User          @relation(fields: [ownerUserId], references: [id])
+
+  @@index([ownerUserId, purpose])
+}
+
+model AuditLog {
+  id          String   @id @default(cuid())
+  actorUserId String?
+  action      String
+  targetType  String
+  targetId    String
+  reason      String?
+  metadata    Json?
+  createdAt   DateTime @default(now())
+  actor       User?    @relation(fields: [actorUserId], references: [id])
+
+  @@index([targetType, targetId])
+  @@index([actorUserId, createdAt])
+  @@index([createdAt])
+}
+
+/// Records *how* someone was verified. Document numbers are never stored (D-014 Q7).
+model VerificationRecord {
+  id          String             @id @default(cuid())
+  userId      String
+  profileType ProfileType
+  method      VerificationMethod
+  verifiedBy  String?
+  notes       String?
+  createdAt   DateTime           @default(now())
+  user        User               @relation("VerificationSubject", fields: [userId], references: [id])
+  verifier    User?              @relation("VerificationVerifier", fields: [verifiedBy], references: [id])
+
+  @@index([userId])
+}

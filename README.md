@@ -12,20 +12,30 @@ construction helpers with households, contractors, shops and small businesses.
 ## Requirements
 
 - Node.js 24 (see `.nvmrc`)
-- Docker (for local PostgreSQL)
+- PostgreSQL 16: either a native install, or Docker (`docker compose up -d db`)
 
 ## Quick start (local development)
+
+With native PostgreSQL 16, create the dev role and database once. You'll be asked for your `postgres` password:
+
+```bash
+psql -U postgres -h localhost -c "CREATE ROLE kaamsetu LOGIN PASSWORD 'kaamsetu_dev' CREATEDB;" -c "CREATE DATABASE kaamsetu OWNER kaamsetu;"
+```
+
+(With Docker, `docker compose up -d db` creates both instead.) Then:
 
 ```bash
 npm install
 cp .env.example .env
-docker compose up -d db
+npx prisma migrate deploy
+npm run db:seed          # Nagpur localities + categories (safe to re-run)
+npm run db:seed:demo     # optional fake demo data
 npm run dev
 ```
 
-Open http://localhost:3000. Health check: http://localhost:3000/api/health.
+Open http://localhost:3000. Health check (includes a database ping): http://localhost:3000/api/health.
 
-The database isn't used until Phase 2. P1 only validates that `DATABASE_URL` is well formed.
+Integration tests empty every table, so they use a separate database. Prepare it once with `npm run db:test:prepare`.
 
 ## Scripts
 
@@ -36,7 +46,9 @@ The database isn't used until Phase 2. P1 only validates that `DATABASE_URL` is 
 | `npm run lint` | ESLint (zero warnings allowed) |
 | `npm run format` / `format:check` | Prettier write / check |
 | `npm run typecheck` | TypeScript, no emit |
-| `npm test` | Vitest unit + integration tests |
+| `npm test` | Vitest unit tests (no database) |
+| `npm run test:integration` | Postgres‑backed tests against `TEST_DATABASE_URL` |
+| `npm run db:seed` / `db:seed:demo` | Reference data / fake demo data |
 | `npm run test:e2e` | Playwright on a mobile viewport. Run `npm run build` first; installs need `npx playwright install chromium` once |
 | `npm run check` | lint + format + typecheck + tests + build |
 

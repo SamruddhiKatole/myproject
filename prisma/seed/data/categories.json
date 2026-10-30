@@ -1,0 +1,118 @@
+{
+  "_source": "Initial skill taxonomy (ARCHITECTURE §5.1). Icon names are Lucide icon ids. Hindi/Marathi labels are best-effort and need native review (P13).",
+  "categories": [
+    {
+      "slug": "house-help",
+      "icon": "house",
+      "nameEn": "House help",
+      "nameHi": "घरेलू कामगार",
+      "nameMr": "घरकाम मदतनीस"
+    },
+    {
+      "slug": "cook",
+      "icon": "chef-hat",
+      "nameEn": "Cook",
+      "nameHi": "रसोइया",
+      "nameMr": "स्वयंपाकी"
+    },
+    {
+      "slug": "cleaner",
+      "icon": "spray-can",
+      "nameEn": "Cleaner",
+      "nameHi": "सफ़ाई कर्मचारी",
+      "nameMr": "साफसफाई कामगार"
+    },
+    {
+      "slug": "caregiver",
+      "icon": "baby",
+      "nameEn": "Child / elder care",
+      "nameHi": "बच्चों / बुज़ुर्गों की देखभाल",
+      "nameMr": "मुले / ज्येष्ठांची काळजी"
+    },
+    { "slug": "driver", "icon": "car", "nameEn": "Driver", "nameHi": "ड्राइवर", "nameMr": "चालक" },
+    {
+      "slug": "carpenter",
+      "icon": "hammer",
+      "nameEn": "Carpenter",
+      "nameHi": "बढ़ई",
+      "nameMr": "सुतार"
+    },
+    {
+      "slug": "plumber",
+      "icon": "wrench",
+      "nameEn": "Plumber",
+      "nameHi": "प्लंबर",
+      "nameMr": "प्लंबर"
+    },
+    {
+      "slug": "electrician",
+      "icon": "plug-zap",
+      "nameEn": "Electrician",
+      "nameHi": "इलेक्ट्रीशियन",
+      "nameMr": "इलेक्ट्रिशियन"
+    },
+    {
+      "slug": "painter",
+      "icon": "paint-roller",
+      "nameEn": "Painter",
+      "nameHi": "पेंटर",
+      "nameMr": "रंगारी"
+    },
+    {
+      "slug": "mason",
+      "icon": "brick-wall",
+      "nameEn": "Mason",
+      "nameHi": "राजमिस्त्री",
+      "nameMr": "गवंडी"
+    },
+    {
+      "slug": "construction-helper",
+      "icon": "hard-hat",
+      "nameEn": "Construction helper",
+      "nameHi": "निर्माण मज़दूर",
+      "nameMr": "बांधकाम मजूर"
+    },
+    {
+      "slug": "welder",
+      "icon": "flame",
+      "nameEn": "Welder",
+      "nameHi": "वेल्डर",
+      "nameMr": "वेल्डर"
+    },
+    {
+      "slug": "shop-helper",
+      "icon": "store",
+      "nameEn": "Shop helper",
+      "nameHi": "दुकान सहायक",
+      "nameMr": "दुकान मदतनीस"
+    },
+    {
+      "slug": "delivery-helper",
+      "icon": "bike",
+      "nameEn": "Delivery helper",
+      "nameHi": "डिलीवरी सहायक",
+      "nameMr": "डिलिव्हरी मदतनीस"
+    },
+    {
+      "slug": "security-guard",
+      "icon": "shield",
+      "nameEn": "Security guard",
+      "nameHi": "सुरक्षा गार्ड",
+      "nameMr": "सुरक्षा रक्षक"
+    },
+    {
+      "slug": "gardener",
+      "icon": "sprout",
+      "nameEn": "Gardener",
+      "nameHi": "माली",
+      "nameMr": "माळी"
+    },
+    {
+      "slug": "other",
+      "icon": "briefcase",
+      "nameEn": "Other work",
+      "nameHi": "अन्य काम",
+      "nameMr": "इतर काम"
+    }
+  ]
+}

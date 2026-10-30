@@ -18,9 +18,10 @@ jobs:
       NODE_ENV: test
       APP_BASE_URL: http://localhost:3100
       DATABASE_URL: postgresql://kaamsetu:kaamsetu_ci@localhost:5432/kaamsetu
+      # CI's database is throwaway, so the integration tests may share it.
+      TEST_DATABASE_URL: postgresql://kaamsetu:kaamsetu_ci@localhost:5432/kaamsetu
       LOG_LEVEL: warn
     services:
-      # Not used by P1 tests; present so P2 integration tests run without CI changes.
       postgres:
         image: postgres:16-alpine
         env:
@@ -37,11 +38,15 @@ jobs:
         with:
           node-version-file: .nvmrc
           cache: npm
+      # npm ci runs `prisma generate` via postinstall.
       - run: npm ci
+      - run: npx prisma migrate deploy
       - run: npm run lint
       - run: npm run format:check
       - run: npm run typecheck
       - run: npm test
+      - run: npm run test:integration
+      - run: npm run db:seed
       - run: npm run build
       - run: npx playwright install --with-deps chromium
       - run: npm run test:e2e

@@ -8,7 +8,8 @@ export default defineConfig({
   },
   test: {
     environment: "node",
-    include: ["tests/unit/**/*.test.ts", "tests/integration/**/*.test.ts"],
+    // Database tests run separately: `npm run test:integration` (vitest.integration.config.mts).
+    include: ["tests/unit/**/*.test.ts"],
     restoreMocks: true,
   },
 });

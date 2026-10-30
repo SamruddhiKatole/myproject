@@ -65,6 +65,32 @@ Defined in `docs/IMPLEMENTATION_ROADMAP.md` under each phase, item 7.
 | 2026-10-29 | P1 | `git push -u origin main` | PASS: `origin/main` = `31757eb` | Pushed by the owner from the terminal tab |
 | 2026-10-29 | P1 | GitHub Actions CI, run [40830903353](https://github.com/SamruddhiKatole/myproject/actions/runs/40830903353) on `31757eb` | **PASS** (success, ≈1m20s). Every step succeeded: npm ci, lint, format:check, typecheck, test, build, playwright install, test:e2e, npm audit | Clean checkout on ubuntu‑latest, Node 24, Postgres 16 service. Result read via GitHub REST API |
 
+| 2026-10-30 | P2 (partial, before installs) | `npm test` | PASS — 3 files, 15 tests (8 P1 + 7 new seed‑data tests) | Seed JSON validated: ≈60 localities in bounds, unique slugs, Devanagari names, 17 categories |
+| 2026-10-30 | P2 (partial) | `npm run format:check` | PASS (after `prettier --write` on new files) | |
+| 2026-10-30 | P2 (partial) | `npm run lint` | PASS (0 warnings) | |
+| 2026-10-30 | P2 (partial) | `npm run typecheck` | **FAIL — expected, 10 errors**: cannot find `prisma/config`, `@prisma/adapter-pg`, `src/generated/prisma/client`, plus implicit‑any errors that follow from them | Packages not installed yet (owner approval pending). Must pass before P2 is IMPLEMENTED |
+
+| 2026-10-30 | P2 | `winget install --id PostgreSQL.PostgreSQL.16 --version 16.15-5 --exact --interactive` (owner‑approved, owner ran the wizard) | PASS: "Successfully installed"; service `postgresql-x64-16` Running; port 5432 open | D‑019 |
+| 2026-10-30 | P2 | `psql -U postgres … CREATE ROLE kaamsetu … CREATEDB; CREATE DATABASE kaamsetu …` (owner typed the password) | PASS: `CREATE ROLE`, `CREATE DATABASE` | Owner‑confirmed |
+| 2026-10-30 | P2 | `npx prisma migrate deploy` | PASS: applied `20261030000000_init`, `20261030000100_fts_generated_columns` | |
+| 2026-10-30 | P2 | `npx prisma migrate status` | PASS: "Database schema is up to date!" | |
+| 2026-10-30 | P2 | `npx prisma migrate diff --from-config-datasource --to-schema prisma/schema.prisma --script` | First run: 2 spurious `ALTER … "searchVector" DROP DEFAULT` lines. After the schema mirrored the generation expression with `@default(dbgenerated(…))`: "This is an empty migration." | Prevents a broken future migration |
+| 2026-10-30 | P2 | `npx prisma migrate dev --create-only --name drift_check` (replays all migrations in a shadow DB) | PASS: generated migration was empty, then deleted | No drift between migrations and schema |
+| 2026-10-30 | P2 | `npm run db:seed` ×2 | PASS: both runs `{cities: 1, localities: 59, categories: 17, admin: skipped}` | Idempotent |
+| 2026-10-30 | P2 | `npm run db:seed:demo` | PASS: `{workers: 40, employers: 15, jobs: 40, applications: 30}` | Dev DB `kaamsetu` |
+| 2026-10-30 | P2 | `npm run db:test:prepare` | PASS: created `kaamsetu_test`, applied both migrations | First attempt failed: top‑level `await` in a CJS `.ts` file; wrapped in `main()` |
+| 2026-10-30 | P2 | `npm run test:integration` | **PASS — 1 file, 16 tests** (9.5 s) | Runs against `kaamsetu_test`. The earlier note said 18; the file has 16 |
+| 2026-10-30 | P2 | Dev DB row counts after integration run | City 1, Locality 59, SkillCategory 17, User 55, Job 40, Application 30 | Confirms tests no longer touch the dev DB |
+| 2026-10-30 | P2 | `npm test` | PASS — 3 files, 15 tests | |
+| 2026-10-30 | P2 | `npm run lint`, `npm run typecheck`, `npx prettier --check .` | PASS | Re‑run after the health‑route change |
+| 2026-10-30 | P2 | `npm run build` | PASS | `/api/health` is dynamic |
+| 2026-10-30 | P2 | `npm run test:e2e` | PASS — 3/3 | Health test now also asserts `db: "ok"` |
+
+### P2 checks NOT run
+- CI on `phase/p2-database` (not pushed yet).
+- Health route's 503 path with the database down (would need the Postgres service stopped, which needs admin rights).
+- `npm run dev` (P1 deferred item).
+
 ### P1 tests that were NOT run
 - **CI workflow on GitHub**: done. PASS (run 40830903353).
 - **`npm run dev`** (development server): NOT RUN. The production server (`next start`) is exercised by E2E.
